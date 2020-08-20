@@ -2,6 +2,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections;
+
 
 
 namespace codility {
@@ -22,18 +24,78 @@ namespace codility {
         [TestMethod]
         [DataRow("aaaabbbb", 1)]
         [DataRow("ccaaffddecee", 6)]
+        [DataRow("ccbbbaaaaddddeeeeffff", 11)]
+        [DataRow("aabbbccccddddeeeeffff", 11)]
+        [DataRow("eeee", 0)]
+        [DataRow("aaaabbbbccccddddeeeeffff", 14)]
         public void SolutionTest(string input, int expected) {
 
             Console.WriteLine("Running SolutionTest");
             
-            Assert.AreEqual(expected, Codility.solution(input));
+            Assert.AreEqual(expected, Codility.Solution2(input));
         }
+
+
+
+
+
+
+
+
+
 
 
         public class Codility {
 
-            public static int solution(string S) {
+            public static int  Solution2(string s) {
 
+                if(s ==null || s.Length ==0)
+                    return 0;
+
+                var ordered = s.GroupBy(l=>l).Select(n=> 
+                    new { n.Key, Count = (Int32)n.Count() })
+                    .ToDictionary(x=>x.Key, x=>x.Count)
+                    .ToArray();                
+                ordered.Reverse();
+                
+                int deleted =0;
+
+                for(int i=ordered.Length-1; i > 0; --i) {
+
+                    while(ordered[i-1].Value >= ordered[i].Value && 
+                        ordered[i-1].Value > 0) {
+
+                        var newEntry = 
+                        new KeyValuePair<char, int>(ordered[i-1].Key, ordered[i-1].Value-1);
+                        ordered[i-1] = newEntry;
+                        deleted+=1;
+                        
+                    }
+
+                }
+                return deleted;                
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            public static int solution(string S) {
+                
                 var letters = Array.CreateInstance(typeof(int), 26);
 
                 var grouped = S.GroupBy(l=>l).Select(n=> new { n.Key, Index = n.Key-97, Count = n.Count() });
