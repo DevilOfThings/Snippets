@@ -6,6 +6,13 @@ using System.Collections.Generic;
 
 namespace codility {
 
+    public static class Extension {
+
+        public static IEnumerable<(T ITestMethod, int index)> WithIndex<T>(this IEnumerable<T> source)
+        {
+            return source.Select((item,index) =>  (item, index));
+        }
+    }
     public class Solution2 {
 
         public static int solution(int[] A) 
